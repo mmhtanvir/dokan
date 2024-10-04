@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Product Section -->
+<div class="container my-5">
+  {% if item and item|length > 0 %}
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      <!-- Product Card -->
+      {% for item in item %}
+      <div class="col">
+        <div class="card h-500">
+          <img src="{{ url_for('static', filename='products/' ~ item.image) }}" class="card-img-top" alt="{{ item.part_name }}.jpg">
+          <div class="card-body">
+            <h5 class="card-title">{{ item.part_name }}</h5>
+            <p class="card-text">{{ item.price }}</p>
+            <a href="#" class="btn btn-primary">
+              <img src="{{ url_for('static', filename='iconss/add_shopping_cart.svg') }}" width="20px"> Add to Cart
+            </a>
+            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#productModal{{ item.id }}">
+              View Details
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Product Modal -->
+      <div class="modal fade" id="productModal{{ item.id }}" tabindex="-1" aria-labelledby="productModal{{ item.id }}Label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="productModal{{ item.id }}Label">{{ item.part_name }}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <img src="{{ url_for('static', filename='products/' ~ item.image) }}" class="img-fluid mb-3" alt="{{ item.part_name }}">
+              <p>{{ item.description }}</p>
+              <p><strong>Price:</strong> {{ item.price }}</p>
+            </div>
+            <div class="modal-footer">
+              <a href="#" class="btn btn-primary">
+                <img src="{{ url_for('static', filename='iconss/add_shopping_cart.svg') }}" width="20px"> Add to Cart
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <h1 class="text-center">No products have been added for this category yet.</h1>
+  {% endif %}
+</div>  
+{% endblock %}

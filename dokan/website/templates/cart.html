@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Shopping Cart{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+        {% if cart_count == 0 %}
+        <h1 class="text-center">Products You Add To Cart Will Be Found Here</h1>
+        {% else %}
+    <h1 class="mb-4">Shopping Cart</h1>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">Product</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for item in item %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <img src="{{ item.item.image }}" alt="Product Image" width="50" class="me-3">
+                            <span>{{ item.item.part_name }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        {{item.quantity}}
+                    </td>
+                    <td>৳{{ item.item.price }}</td>
+                    <td>
+                        <a href="/delete-cart/{{ item.id }}" class="btn btn-danger btn-sm" onclick="return confirm('Are You Sure to Delete This Product From Cart')">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="d-flex justify-content-between mt-4">
+        <form action="/checkout" method="POST" class="d-inline">
+            <button type="submit" class="btn btn-success mb-5">Proceed to Checkout</button>
+        </form>
+    </div>    
+        {% endif %}
+</div>
+{% endblock %}

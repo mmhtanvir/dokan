@@ -1,0 +1,69 @@
+{% extends 'admin-base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+  <!-- Dashboard Overview -->
+  <div class="row">
+    <div class="col-md-4">
+      <a href="/products" class="card bg-primary text-white mb-4 text-decoration-none">
+        <div class="card-body">
+          <h5 class="card-title">Products</h5>
+          <p class="card-text text-white">Manage products in your store</p>
+        </div>
+      </a>      
+    </div>
+    <div class="col-md-4">
+      <a href="/user" class="card bg-warning text-white mb-4 text-decoration-none">
+        <div class="card-body">
+          <h5 class="card-title">Staff & Customer</h5>
+          <p class="card-text text-white">Manage registered users and customers</p>
+        </div>
+      </a>      
+    </div>
+    <div class="col-md-4">
+      <a href="/orders" class="card bg-success text-white mb-4 text-decoration-none">
+        <div class="card-body">
+          <h5 class="card-title">Orders</h5>
+          <p class="card-text text-white">Track and manage orders</p>
+        </div>
+      </a>      
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          Recent Orders
+        </div>
+        <div class="card-body">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Order ID</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in order %}
+              <tr onclick="window.location='order/{{ order.order }}'">
+                <td>{{ order.id }}</td>
+                <td>{{ order.buyer.name }}</td>
+                <td>{{ order.item.part_name }}</td>
+                <td>{{ order.order }}</td>
+                <td><span class="badge {{ 'bg-success' if order.status == 'delivered' else 'bg-warning' }}">{{ order.status }}</span></td>
+                <td>{{ order.date_created.strftime('%d %b %Y') }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

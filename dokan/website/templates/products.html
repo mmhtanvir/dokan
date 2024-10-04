@@ -1,0 +1,281 @@
+{% extends "admin-base.html" %}
+
+{% block title %}Admin - Manage Products{% endblock %}
+
+{% block content %}
+<nav class="navbar navbar-light bg-light">
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h1">Manage Products</span>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">Add Product</button>
+  </div>
+</nav>
+
+<div class="card mb-5">
+  <div class="card-header">
+    <h5 class="card-title">Product List</h5>
+    <div class="input-group mb-3">
+      <input type="text" class="form-control" placeholder="Search for products..." aria-label="Search">
+      <button class="btn btn-outline-secondary" type="button">Search</button>
+    </div>
+  </div>
+  <div class="card-body">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Part Number</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in item %}
+        <tr>
+          <td>{{ item.id }}</td>
+          <td>{{ item.part_name }}</td>
+          <td>{{ item.part_number }}</td>
+          <td>৳{{ item.price }}</td>
+          <td>{{ item.stock_quantity }}</td>
+          <td>
+            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editProductModal">Edit</button>
+            <button class="btn btn-sm btn-danger"  onclick="return confirm('Are You Sure to Delete This Data')">Delete</button>
+            <a href="/delete/{{item.id}}" class="btn btn-danger btn-sm">Delete</a>
+          </td>
+        </tr>
+        <!-- Edit Product Modal -->
+        <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="editProductModalLabel">Edit Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form action="/edit/{{ item.id }}" method="POST" enctype="multipart/form-data" id="editProductForm">
+                  <input type="hidden" name="itemId" value="{{ item.id }}">
+                  <div class="mb-3">
+                    <label for="editPartName{{ item.id }}" class="form-label">Part Name</label>
+                    <input type="text" class="form-control" id="editPartName{{ item.id }}" name="editPartName" value="{{ item.part_name }}" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="editPartNumber{{ item.id }}" class="form-label">Part Number</label>
+                    <input type="text" class="form-control" id="editPartNumber{{ item.id }}" name="editPartNumber" value="{{ item.part_number }}" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="editCompatibility{{ item.id }}" class="form-label">Compatibility</label>
+                    <input type="text" class="form-control" id="editCompatibility{{ item.id }}" name="editCompatibility" value="{{ item.compatibility }}" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="editDescription{{ item.id }}" class="form-label">Description</label>
+                    <textarea class="form-control" id="editDescription{{ item.id }}" name="editDescription">{{ item.description }}</textarea>
+                  </div>
+                  <div class="mb-3">
+                    <label for="editCondition{{ item.id }}" class="form-label">Condition</label>
+                    <input type="text" class="form-control" id="editCondition{{ item.id }}" name="editCondition" value="{{ item.condition }}" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="editWarranty{{ item.id }}" class="form-label">Warranty</label>
+                    <input type="text" class="form-control" id="editWarranty{{ item.id }}" name="editWarranty" value="{{ item.warranty }}" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="editPrice{{ item.id }}" class="form-label">Price</label>
+                    <input type="number" step="0.01" class="form-control" id="editPrice{{ item.id }}" name="editPrice" value="{{ item.price }}" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="editDiscount{{ item.id }}" class="form-label">Discount</label>
+                    <input type="number" step="0.01" class="form-control" id="editDiscount{{ item.id }}" value="{{ item.discount }}" name="editDiscount">
+                  </div>
+                  <div class="mb-3">
+                    <label for="editStockQuantity{{ item.id }}" class="form-label">Stock Quantity</label>
+                    <input type="number" class="form-control" id="editStockQuantity{{ item.id }}" name="editStockQuantity" value="{{ item.stock_quantity }}" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="editAvailabilityStatus{{ item.id }}" class="form-label">Availability Status</label>
+                    <select class="form-select" id="editAvailabilityStatus{{ item.id }}" name="editAvailabilityStatus" required>
+                      <option selected>Select status</option>
+                      <option value="Upcoming" {% if item.availability_status == 'Upcoming' %}selected{% endif %}>Upcoming</option>
+                      <option value="In Stock" {% if item.availability_status == 'In Stock' %}selected{% endif %}>In Stock</option>
+                      <option value="Out of Stock" {% if item.availability_status == 'Out of Stock' %}selected{% endif %}>Out of Stock</option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label for="editImage{{ item.id }}" class="form-label">Current Image</label>
+                    <img id="currentImage{{ item.id }}" src="{{ item.image }}" alt="Current Image" style="max-width: 100%; height: auto;">
+                    <label for="editImage{{ item.id }}" class="form-label">New Image Upload</label>
+                    <input type="file" class="form-control" id="editImage{{ item.id }}" name="editImage" accept="image/*">
+                  </div>
+                  <div class="mb-3">
+                    <label for="editSecondaryImage{{ item.id }}" class="form-label">Current Secondary Image</label>
+                    <img id="currentSecondaryImage{{ item.id }}" src="{{ item.secondary_image }}" alt="Current Secondary Image" style="max-width: 100%; height: auto;">
+                    <label for="editSecondaryImage{{ item.id }}" class="form-label">New Secondary Image Upload</label>
+                    <input type="file" class="form-control" id="editSecondaryImage{{ item.id }}" name="editSecondaryImage" accept="image/*">
+                  </div>
+                  <div class="mb-3">
+                    <label for="editCategory{{ item.id }}" class="form-label">Category</label>
+                    <select class="form-select" id="editCategory{{ item.id }}" name="editCategory" required>
+                      <option selected>Select category</option>
+                      {% for category in category %}
+                      <option value="{{ category.id }}" {% if category.id == item.category.id %}selected{% endif %}>{{ category.name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label for="editBrand{{ item.id }}" class="form-label">Brand</label>
+                    <select class="form-select" id="editBrand{{ item.id }}" name="editBrand" required>
+                      <option selected>Select brand</option>
+                      {% for brand in brand %}
+                      <option value="{{ brand.id }}" {% if brand.id == item.brand.id %}selected{% endif %}>{{ brand.name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Update Product</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add Category and Brand Buttons -->
+<div class="d-flex justify-content-end mb-3">
+  <button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#addCategoryModal">Add Category</button>
+  <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addBrandModal">Add Brand</button>
+</div>
+
+<!-- Add Product Modal -->
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="/products" method="POST" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label for="partName" class="form-label">Part Name</label>
+            <input type="text" class="form-control" id="partName" name="partName" required>
+          </div>
+          <div class="mb-3">
+            <label for="partNumber" class="form-label">Part Number</label>
+            <input type="text" class="form-control" id="partNumber" name="partNumber" required>
+          </div>
+          <div class="mb-3">
+            <label for="compatibility" class="form-label">Compatibility</label>
+            <input type="text" class="form-control" id="compatibility" name="compatibility" required>
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" name="description" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="condition" class="form-label">Condition</label>
+            <input type="text" class="form-control" id="condition" name="condition" required>
+          </div>
+          <div class="mb-3">
+            <label for="warranty" class="form-label">Warranty</label>
+            <input type="text" class="form-control" id="warranty" name="warranty" required>
+          </div>
+          <div class="mb-3">
+            <label for="price" class="form-label">Price</label>
+            <input type="number" step="0.01" class="form-control" id="price" name="price" required>
+          </div>
+          <div class="mb-3">
+            <label for="discount" class="form-label">Discount</label>
+            <input type="number" step="0.01" class="form-control" id="discount" name="discount">
+          </div>
+          <div class="mb-3">
+            <label for="stockQuantity" class="form-label">Stock Quantity</label>
+            <input type="number" class="form-control" id="stockQuantity" name="stockQuantity" required>
+          </div>
+          <div class="mb-3">
+            <label for="availabilityStatus" class="form-label">Availability Status</label>
+            <select class="form-select" id="availabilityStatus" name="availabilityStatus" required>
+              <option selected>Select status</option>
+              <option value="Upcoming">Upcoming</option>
+              <option value="In Stock">In Stock</option>
+              <option value="Out of Stock">Out of Stock</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="image" class="form-label">Product Image</label>
+            <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+          </div>
+          <div class="mb-3">
+            <label for="secondaryImage" class="form-label">Secondary Image</label>
+            <input type="file" class="form-control" id="secondaryImage" name="secondaryImage" accept="image/*" required>
+          </div>
+          <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <select class="form-select" id="category" name="category" required>
+              <option selected>Select category</option>
+              {% for category in category %}
+              <option value="{{ category.id }}">{{ category.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="brand" class="form-label">Brand</label>
+            <select class="form-select" id="brand" name="brand" required>
+              <option selected>Select brand</option>
+              {% for brand in brand %}
+              <option value="{{ brand.id }}">{{ brand.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Add Product</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Category Modal -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addCategoryModalLabel">Add New Category</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="/category" method="POST">
+          <div class="mb-3">
+            <label for="categoryName" class="form-label">Category Name</label>
+            <input type="text" class="form-control" id="categoryName" name="categoryName" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Add Category</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Brand Modal -->
+<div class="modal fade" id="addBrandModal" tabindex="-1" aria-labelledby="addBrandModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addBrandModalLabel">Add New Brand</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="/brand" method="POST">
+          <div class="mb-3">
+            <label for="brandName" class="form-label">Brand Name</label>
+            <input type="text" class="form-control" id="brandName" name="brandName" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Add Brand</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "admin-base.html" %}
+{% block title %}Admin - Order Tracking{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Order Tracking</h2>
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title">Search Order</h5>
+        </div>
+        <div class="card-body">
+            <form method="GET" action="{{ url_for('admin.order') }}">
+                <div class="mb-3">
+                    <label for="orderId" class="form-label">Order ID</label>
+                    <input type="text" name="orderId" class="form-control" id="orderId" placeholder="Enter Order ID" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Search Order</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

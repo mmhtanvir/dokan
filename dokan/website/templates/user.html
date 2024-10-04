@@ -1,0 +1,193 @@
+{% extends "admin-base.html" %}
+
+{% block title %}Manage Users and Customers{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav class="navbar navbar-light bg-light mb-3">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">Manage Staff</span>
+            <div class="d-inline">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createRoleModal">Create Role</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Users Table -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title">Staff List</h5>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Search for users..." aria-label="Search">
+                <button class="btn btn-outline-secondary" type="button">Search</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+              {% for user in users %}
+              {% if user.role.role_name == 'admin' or user.role.role_name == 'staff' %}
+                <tbody>
+                    <tr>
+                        <td>{{user.id}}</td>
+                        <td>{{user.name}}</td>
+                        <td>{{user.email}}</td>
+                        <td>{{user.number}}</td>
+                        <td>{{user.role.role_name}}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editUserModal{{user.id}}">Edit</button>
+                            <button class="btn btn-sm btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+                <!-- Edit User Modal -->
+                <div class="modal fade" id="editUserModal{{user.id}}" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="editUserName" class="form-label">User Name</label>
+                                        <input type="text" class="form-control" id="editUserName" value="{{user.name}}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editEmail" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="editEmail" value="{{user.email}}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editRole" class="form-label">Role</label>
+                                        <select class="form-select" id="editRole" required>
+                                            {% for role in roles %}
+                                                <option value="{{role.id}}" {% if role.id == user.role.id %}selected{% endif %}>{{role.role_name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+              {% endfor %}
+            </table>
+        </div>
+    </div>
+    
+
+    <!-- Customers Table -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title">Customer List</h5>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Search for customers..." aria-label="Search">
+                <button class="btn btn-outline-secondary" type="button">Search</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                {% for user in users %}
+                {% if user.role.role_name == 'customer' %}
+                <tbody>
+                    <tr>
+                        <td>{{user.id}}</td>
+                        <td>{{user.name}}</td>
+                        <td>{{user.email}}</td>
+                        <td>{{user.number}}</td>
+                        <td>{{user.role.role_name}}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editCustomerModal{{user.id}}">Edit</button>
+                            <button class="btn btn-sm btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <!-- Edit Customer Modal -->
+                <div class="modal fade" id="editCustomerModal{{user.id}}" tabindex="-1" aria-labelledby="editCustomerModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editCustomerModalLabel">Edit Customer</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="editCustomerName" class="form-label">Customer Name</label>
+                                        <input type="text" class="form-control" id="editCustomerName" value="{{user.name}}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editCustomerEmail" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="editCustomerEmail" value="{{user.email}}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editCustomerPhone" class="form-label">Phone</label>
+                                        <input type="text" class="form-control" id="editCustomerPhone" value="{{user.number}}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editRole" class="form-label">Role</label>
+                                        <select class="form-select" id="editRole" required>
+                                            {% for role in roles %}
+                                                <option value="{{role.id}}" {% if role.id == user.role.id %}selected{% endif %}>{{role.role_name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Create Role Modal -->
+<div class="modal fade" id="createRoleModal" tabindex="-1" aria-labelledby="createRoleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createRoleModalLabel">Create New Role</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/new_role" method="POST" >
+                    <div class="mb-3">
+                        <label for="roleName" class="form-label">Role Name</label>
+                        <input type="text" name="roleName" class="form-control" id="roleName" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Role</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

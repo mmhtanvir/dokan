@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- Product Section -->
+<div class="container my-5">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      <!-- Product Card -->
+     {% for item in item %}
+      <div class="col">
+        <div class="card h-500">
+          <img src="{{ item.image }}" class="card-img-top" alt="{{item.part_name}}.jpg">
+          <div class="card-body">
+            <h5 class="card-title">{{item.part_name}}</h5>
+            <p class="card-text">{{item.price}}</p>
+            <!-- Add to Cart Button with Modal Trigger -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addToCartModal{{item.id}}">
+              <img src="{{ url_for('static', filename='iconss/add_shopping_cart.svg') }}" width="20px"> Add to Cart
+            </button>
+            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#productModal{{item.id}}">
+              View Details
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Details Modal -->
+      <div class="modal fade" id="productModal{{item.id}}" tabindex="-1" aria-labelledby="productModalLabel{{item.id}}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="productModalLabel{{item.id}}">{{item.part_name}}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <img src="{{ item.image }}" class="img-fluid mb-3" alt="Product Image">
+              <p>{{item.description}}</p>
+              <p><strong>Price:</strong> {{item.price}}</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#addToCartModal{{item.id}}">
+                <img src="{{ url_for('static', filename='iconss/add_shopping_cart.svg') }}" width="20px"> Add to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add to Cart Confirmation Modal -->
+<!-- Add to Cart Confirmation Modal -->
+<div class="modal fade" id="addToCartModal{{item.id}}" tabindex="-1" aria-labelledby="addToCartModalLabel{{item.id}}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addToCartModalLabel{{item.id}}">Confirm Add to Cart and Quantity</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Product : <strong>{{item.part_name}}</strong></p>
+                <p>Price : <strong>{{item.price}}</strong></p>
+                <p>Category : <strong>{{item.category.name}}</strong></p>
+                <p>Brand : <strong>{{item.brand.name}}</strong></p>
+                <form action="/add-to-cart/{{item.id}}" method="POST">
+                    <input type="hidden" name="itemId" value="{{ item.id }}">
+                    <div class="mb-3">
+                        <label for="quantity{{ item.id }}" class="form-label">Quantity</label>
+                        <input type="number" class="form-control" id="quantity{{ item.id }}" value="1" name="quantity" min="1" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <img src="{{ url_for('static', filename='iconss/add_shopping_cart.svg') }}" width="20px"> Confirm
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+     {% endfor %}
+    </div>
+  </div>  
+{% endblock %}

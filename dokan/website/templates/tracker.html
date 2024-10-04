@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+
+{% block title %}Order Tracker - Tanvir Auto Parts{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+  <h2 class="text-center mb-4">Track Your Order</h2>
+
+  <!-- Order Tracker Form -->
+  <div id="order-form">
+    <p class="text-center">Please enter your order ID to track your order:</p>
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <form id="orderTrackerForm" class="d-flex">
+          <input type="text" class="form-control" id="orderIdInput" placeholder="Enter Order ID" required>
+          <button type="submit" class="btn btn-primary ms-2">Track Order</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Details Section (Initially hidden) -->
+  <div id="order-details" class="mt-5" style="display: none;">
+    <h4 class="text-center mb-3">Order Details</h4>
+    <div class="row">
+      <div class="col-md-6">
+        <p><strong>Order ID:</strong> <span id="orderId"></span></p>
+        <p><strong>Order Date:</strong> <span id="orderDate"></span></p>
+        <p><strong>Customer Name:</strong> <span id="customerName"></span></p>
+      </div>
+      <div class="col-md-6">
+        <p><strong>Shipping Address:</strong> <span id="shippingAddress"></span></p>
+        <p><strong>Order Status:</strong> <span id="orderStatus"></span></p>
+      </div>
+    </div>
+
+    <!-- Tracking Steps Timeline -->
+    <h5 class="mt-4 text-center">Order Tracking Progress</h5>
+    <div class="tracking-steps d-flex justify-content-between align-items-center mb-5">
+      <div class="step">
+        <div class="icon-circle" id="step1"><i class="fas fa-shopping-cart"></i></div>
+        <p class="text-center mt-2">Order Placed</p>
+      </div>
+      <div class="arrow"><i class="fas fa-chevron-right"></i></div>
+      <div class="step">
+        <div class="icon-circle" id="step2"><i class="fas fa-box"></i></div>
+        <p class="text-center mt-2">Shipped</p>
+      </div>
+      <div class="arrow"><i class="fas fa-chevron-right"></i></div>
+      <div class="step">
+        <div class="icon-circle" id="step4"><i class="fas fa-shipping-fast"></i></div>
+        <p class="text-center mt-2">Out for Delivery</p>
+      </div>
+      <div class="arrow"><i class="fas fa-chevron-right"></i></div>
+      <div class="step">
+        <div class="icon-circle" id="step5"><i class="fas fa-check-circle"></i></div>
+        <p class="text-center mt-2">Delivered</p>
+      </div>
+    </div>
+
+    <!-- Ordered Items Section -->
+    <h5 class="mt-4">Ordered Items</h5>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Quantity</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody id="orderItems">
+        <!-- Order items will be dynamically populated -->
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2" class="text-end"><strong>Grand Total:</strong></td>
+          <td id="grandTotal">$0.00</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
+
+<!-- Custom Styles for Tracking Steps -->
+<style>
+  .tracking-steps {
+    margin-top: 30px;
+  }
+
+  .step {
+    text-align: center;
+    flex: 1;
+  }
+
+  .icon-circle {
+    width: 50px;
+    height: 50px;
+    background-color: lightgray;
+    border-radius: 50%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    color: white;
+  }
+
+  .step .icon-circle.active {
+    background-color: #0d6efd; /* Bootstrap primary color */
+  }
+
+  .icon-circle i {
+    font-size: 24px;
+  }
+
+  .arrow {
+    font-size: 24px;
+    color: gray;
+  }
+
+  .arrow.active {
+    color: #0d6efd; /* Bootstrap primary color for active steps */
+  }
+
+  /* Media Query for Mobile View */
+  @media (max-width: 576px) {
+    .icon-circle {
+      width: 30px;
+      height: 30px;
+      font-size: 14px;
+    }
+
+    .icon-circle i {
+      font-size: 16px;
+    }
+
+    .arrow {
+      font-size: 16px;
+    }
+
+    .step p {
+      font-size: 12px;
+    }
+  }
+</style>
+
+<script>
+  document.getElementById('orderTrackerForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const orderId = document.getElementById('orderIdInput').value;
+    if (orderId) {
+      // Simulate fetching order details (Replace with actual fetch from server)
+      document.getElementById('orderId').textContent = orderId;
+      document.getElementById('orderDate').textContent = '2024-09-20';
+      document.getElementById('customerName').textContent = 'John Doe';
+      document.getElementById('shippingAddress').textContent = '123 Main St, Dhaka';
+      document.getElementById('orderStatus').textContent = 'Shipped';
+
+      // Sample items
+      const items = [
+        { name: 'Engine Oil', quantity: 2, price: 50 },
+        { name: 'Brake Pads', quantity: 1, price: 30 }
+      ];
+      
+      const orderItems = document.getElementById('orderItems');
+      orderItems.innerHTML = '';
+      let grandTotal = 0;
+
+      // Populate items and calculate total
+      items.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${item.name}</td><td>${item.quantity}</td><td>$${(item.price * item.quantity).toFixed(2)}</td>`;
+        orderItems.appendChild(row);
+        
+        grandTotal += item.price * item.quantity;
+      });
+
+      // Update the Grand Total
+      document.getElementById('grandTotal').textContent = `$${grandTotal.toFixed(2)}`;
+
+      // Show the order details
+      document.getElementById('order-details').style.display = 'block';
+
+      // Update the tracking steps based on order status
+      updateTrackingSteps('Shipped'); // Simulated status, replace with actual order status
+    }
+  });
+
+  function updateTrackingSteps(status) {
+    const steps = ['Order Placed', 'Shipped', 'In Transit', 'Out for Delivery', 'Delivered'];
+    const stepElements = [document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3'), document.getElementById('step4'), document.getElementById('step5')];
+    const arrowElements = document.querySelectorAll('.arrow');
+
+    const currentStep = steps.indexOf(status) + 1;
+
+    stepElements.forEach((stepElement, index) => {
+      if (index < currentStep) {
+        stepElement.classList.add('active');
+        if (arrowElements[index]) {
+          arrowElements[index].classList.add('active');
+        }
+      } else {
+        stepElement.classList.remove('active');
+        if (arrowElements[index]) {
+          arrowElements[index].classList.remove('active');
+        }
+      }
+    });
+  }
+</script>
+{% endblock %}

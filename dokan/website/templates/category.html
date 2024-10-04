@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-5">Shop by Category</h1>
+    
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <!-- Category 1 -->
+            {% for category in category %}
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">{{ category.name }}</h5>
+                    <a href="/category/{{category.id}}" class="btn btn-primary">Shop Now</a>
+                </div>
+            </div>
+        </div>
+            {% endfor %}
+
+        <!-- Add more categories as needed -->
+    </div>
+</div>
+{% endblock %}
